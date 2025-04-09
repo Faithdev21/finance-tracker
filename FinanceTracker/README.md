@@ -1,7 +1,7 @@
 # 💰 FinanceTracker
 
 [![Java Version](https://img.shields.io/badge/Java-17-blue)](https://openjdk.org/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.1-green)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-green)](https://spring.io/projects/spring-boot)
 
 Умный трекер личных финансов с аналитикой и интеграцией с банками.
 
