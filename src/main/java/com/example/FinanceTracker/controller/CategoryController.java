@@ -29,7 +29,7 @@ public class CategoryController {
         return ResponseEntity.ok(category);
     }
 
-    @GetMapping("get_my_categories")
+    @GetMapping("/get_my_categories")
     public ResponseEntity<?> getMyCategories() {
         Set<CategoryEntity> categories = categoryService.getCurrentUserCategories();
         return ResponseEntity.ok(categories);
