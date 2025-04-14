@@ -23,31 +23,6 @@ public class CategoryService {
     @Autowired
     private final UserServiceImpl userServiceImpl;
 
-//    public void createDefaultCategories() {
-//        List<CategoryEntity> defaultCategories = Arrays.asList(
-//                CategoryEntity.builder()
-//                        .name("Еда")
-//                        .type(CategoryTypeEntity.EXPENSE)
-//                        .build(),
-//                CategoryEntity.builder()
-//                        .name("Транспорт")
-//                        .type(CategoryTypeEntity.EXPENSE)
-//                        .build(),
-//                CategoryEntity.builder()
-//                        .name("Зарплата")
-//                        .type(CategoryTypeEntity.INCOME)
-//                        .build()
-//        );
-//        List<CategoryEntity> categoriesToSave = new ArrayList<>();
-//        for (CategoryEntity category : defaultCategories) {
-//            if (categoryRepository.existsByName(category.getName())) {
-//                categoriesToSave.add(category);
-//            }
-//        }
-//        categoryRepository.saveAll(defaultCategories);
-//
-//    }
-
     public CategoryEntity getCategoryByIdAndUser(Long categoryId, UserEntity user) {
         return user.getCategories().stream()
                 .filter(category -> category.getId().equals(categoryId))

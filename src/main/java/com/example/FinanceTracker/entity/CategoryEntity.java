@@ -3,6 +3,9 @@ package com.example.FinanceTracker.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Data
 @Builder
@@ -19,5 +22,8 @@ public class CategoryEntity {
 
     @Column(name = "type")
     private String type;
+
+    @ManyToMany(mappedBy = "categories")
+    private Set<UserEntity> users = new HashSet<>();
 }
 
