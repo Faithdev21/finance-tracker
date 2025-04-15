@@ -74,7 +74,7 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
 
 
     @Query("SELECT new com.example.FinanceTracker.dto.MonthlyStatisticDto(" +
-            "CAST(t.date AS localdate), " +
+            "CAST(DATE_TRUNC('month', t.date) AS localdate), " +
             "SUM(CASE WHEN t.category.type = 'INCOME' THEN t.amount ELSE 0 END), " +
             "SUM(CASE WHEN t.category.type = 'EXPENSE' THEN t.amount ELSE 0 END), " +
             "(SUM(CASE WHEN t.category.type = 'INCOME' THEN t.amount ELSE 0 END) - " +
@@ -82,8 +82,8 @@ public interface TransactionRepository extends JpaRepository<TransactionEntity, 
             "FROM TransactionEntity t " +
             "WHERE t.user.id = :userId " +
             "AND t.date BETWEEN :startDate AND :endDate " +
-            "GROUP BY CAST(t.date AS localdate) " +
-            "ORDER BY CAST(t.date AS localdate) DESC")
+            "GROUP BY DATE_TRUNC('month', t.date)" +
+            "ORDER BY DATE_TRUNC('month', t.date) DESC")
     List<MonthlyStatisticDto> getMonthlyStatistics(@Param("userId") Long userId,
                                                    @Param("startDate") LocalDateTime startDate,
                                                    @Param("endDate") LocalDateTime endDate);
