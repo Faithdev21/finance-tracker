@@ -5,14 +5,20 @@ import com.example.FinanceTracker.entity.CategoryEntity;
 import com.example.FinanceTracker.exception.ResourceNotFoundException;
 import com.example.FinanceTracker.repository.CategoryRepository;
 import com.example.FinanceTracker.entity.UserEntity;
+import com.example.FinanceTracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -22,13 +28,15 @@ public class CategoryService {
 
     @Autowired
     private final UserServiceImpl userServiceImpl;
+    @Autowired
+    private UserRepository userRepository;
 
     public CategoryEntity getCategoryByIdAndUser(Long categoryId, UserEntity user) {
         return user.getCategories().stream()
                 .filter(category -> category.getId().equals(categoryId))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Category not found with id: " + categoryId + " for user: " + user.getEmail()
+                        "Category not found with id: " + categoryId + " for user: " + user.getUsername()
                 ));
     }
 
@@ -36,9 +44,10 @@ public class CategoryService {
         return categoryRepository.findByNameIn(Arrays.asList("Еда", "Транспорт", "Зарплата"));
     }
 
+    @Transactional
     public CategoryEntity addCategory(CategoryDto categoryDto) {
         if (categoryRepository.existsByName(categoryDto.getName())) {
-            throw new IllegalArgumentException("Категория с именем '" + categoryDto.getName() + "' уже существует");
+            throw new IllegalArgumentException("Category with name '" + categoryDto.getName() + "' exists already");
         }
 
         CategoryEntity category = CategoryEntity.builder()
@@ -48,15 +57,10 @@ public class CategoryService {
 
         return categoryRepository.save(category);
     }
-    public CategoryEntity addCategoryToCurrentUser(CategoryDto categoryDto) {
+
+    @Transactional
+    public CategoryDto addCategoryToCurrentUser(CategoryDto categoryDto) {
         UserEntity user = userServiceImpl.getCurrentUser();
-
-        boolean alreadyHas = user.getCategories().stream()
-                .anyMatch(c -> c.getName().equalsIgnoreCase(categoryDto.getName()));
-        if (alreadyHas) {
-            throw new IllegalArgumentException("Категория уже добавлена пользователю");
-        }
-
         CategoryEntity category = categoryRepository.findByName(categoryDto.getName())
                 .orElseGet(() -> {
                     CategoryEntity newCategory = CategoryEntity.builder()
@@ -66,14 +70,31 @@ public class CategoryService {
                     return categoryRepository.save(newCategory);
                 });
 
-        user.getCategories().add(category);
-        userServiceImpl.save(user);
+        Set<CategoryEntity> userCategories = user.getCategories();
+        if (userCategories == null) {
+            userCategories = new HashSet<>();
+            user.setCategories(userCategories);
+        }
 
-        return category;
+        if (!userCategories.contains(category)) {
+            userCategories.add(category);
+            userServiceImpl.save(user);
+            log.info("Added category {} to user {}", category.getName(), user.getUsername());
+        } else {
+            log.info("Category {} is already associated with user {}", category.getName(), user.getUsername());
+        }
+
+        return CategoryDto.fromEntity(category);
     }
 
-    public Set<CategoryEntity> getCurrentUserCategories() {
+    @Transactional
+    public List<CategoryDto> getCurrentUserCategories() {
         UserEntity user = userServiceImpl.getCurrentUser();
-        return user.getCategories();
+        log.info("Fetching categories for user: {}", user.getUsername());
+        List<CategoryEntity> userCategories = categoryRepository.findCategoriesByUserId(user.getId());
+
+        return userCategories.stream()
+                .map(CategoryDto::fromEntity)
+                .collect(Collectors.toList() );
     }
 }

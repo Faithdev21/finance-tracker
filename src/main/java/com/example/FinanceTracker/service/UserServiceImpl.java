@@ -1,10 +1,12 @@
 package com.example.FinanceTracker.service;
 
 import com.example.FinanceTracker.dto.RegistrationUserDto;
+import com.example.FinanceTracker.dto.UserDto;
 import com.example.FinanceTracker.entity.UserEntity;
 import com.example.FinanceTracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -68,7 +71,15 @@ public class UserServiceImpl implements UserService {
 
         String username = authentication.getName();
 
-        return userRepository.findByUsername(username)
+         UserEntity user = userRepository.findByUsernameWithCategories(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
+        log.info("Loaded user: {} with categories: {}", user.getUsername(), user.getCategories());
+        return user;
+    }
+
+    @Transactional
+    public UserDto getCurrentUserDto() {
+        UserEntity user = getCurrentUser();
+        return UserDto.fromEntity(user);
     }
 }

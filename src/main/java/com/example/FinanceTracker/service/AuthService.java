@@ -46,7 +46,6 @@ public class AuthService {
             throw new IllegalArgumentException("Username already exists");
         }
         UserEntity user = userService.createNewUser(registrationUserDto);
-//        categoryService.createDefaultCategories();
         List<CategoryEntity> defaultCategories = categoryService.getDefaultCategories();
         user.setCategories(new HashSet<>(defaultCategories));
         userService.save(user);

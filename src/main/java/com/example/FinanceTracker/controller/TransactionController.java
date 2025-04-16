@@ -71,7 +71,7 @@ public class TransactionController {
     private UserEntity getUserFromAuthentication(Authentication authentication) {
         String username = authentication.getName();
         return userService.findByUsername(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + username));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
     }
 
 }

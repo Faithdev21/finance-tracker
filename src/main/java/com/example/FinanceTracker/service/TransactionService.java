@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 
 public interface TransactionService {
     TransactionEntity createTransaction(TransactionRequest request, UserEntity user);
-//    List<TransactionResponse> getUserTransactions(Long userId);
     TransactionResponse toResponse(TransactionEntity transaction);
     Page<TransactionResponse> getUserTransactions(Long userId, TransactionFilterRequest filter);
 }

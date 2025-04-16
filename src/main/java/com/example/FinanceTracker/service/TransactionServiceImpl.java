@@ -1,25 +1,26 @@
 package com.example.FinanceTracker.service;
 
 import com.example.FinanceTracker.dto.*;
+import com.example.FinanceTracker.entity.BudgetEntity;
 import com.example.FinanceTracker.entity.CategoryEntity;
 import com.example.FinanceTracker.entity.TransactionEntity;
+import com.example.FinanceTracker.repository.BudgetRepository;
 import com.example.FinanceTracker.repository.TransactionRepository;
 import com.example.FinanceTracker.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
     private final TransactionRepository transactionRepository;
     private final CategoryService categoryService;
+    private final BudgetService budgetService;
+    private final BudgetRepository budgetRepository;
 
     public TransactionEntity createTransaction(TransactionRequest transactionRequest, UserEntity user) {
         CategoryEntity category = categoryService.getCategoryByIdAndUser(transactionRequest.categoryId(), user);
@@ -31,7 +32,14 @@ public class TransactionServiceImpl implements TransactionService{
         transaction.setCategory(category);
         transaction.setUser(user);
 
-        return transactionRepository.save(transaction);
+        TransactionEntity savedTransaction = transactionRepository.save(transaction);
+
+        List<BudgetEntity> budgets = budgetRepository.findByUserIdAndCategoryId(user.getId(), category.getId());
+        for (BudgetEntity budget : budgets) {
+            budgetService.checkBudgetStatus(budget);
+        }
+
+        return savedTransaction;
     }
 
     public TransactionResponse toResponse(TransactionEntity transaction) {

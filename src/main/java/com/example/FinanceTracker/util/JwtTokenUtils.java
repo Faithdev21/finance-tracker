@@ -38,7 +38,6 @@ public class JwtTokenUtils {
                 .setIssuedAt(issuedDate)
                 .setExpiration(expiredDate)
                 .signWith(SignatureAlgorithm.HS256, secret)
-//                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
                 .compact();
     }
 

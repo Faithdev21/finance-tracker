@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .requestMatchers("/info").authenticated()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .requestMatchers("/transactions").authenticated()
-                        .requestMatchers("add_category").permitAll() // Временно для проверки
+                        .requestMatchers("/add_category").permitAll()
                         .anyRequest().permitAll())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
