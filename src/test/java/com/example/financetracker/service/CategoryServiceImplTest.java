@@ -46,7 +46,7 @@ public class CategoryServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         SecurityContextHolder.setContext(securityContext);
     }
 
