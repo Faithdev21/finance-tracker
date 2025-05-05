@@ -33,6 +33,9 @@ public class CategoryEntity {
     @JsonBackReference
     private Set<UserEntity> users = new HashSet<>();
 
+    public CategoryEntity(long id, String name, String type) {
+    }
+
     public void addUser(UserEntity user) {
         if (user != null && !this.users.contains(user)) {
             this.users.add(user);

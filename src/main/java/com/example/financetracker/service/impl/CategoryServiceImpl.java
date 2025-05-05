@@ -21,12 +21,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-
     @Autowired
     private final CategoryRepository categoryRepository;
 
     @Autowired
     private final UserServiceImpl userServiceImpl;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -64,6 +64,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .name(categoryDto.getName())
                 .type(categoryDto.getType())
                 .build();
+        log.info("adding category ...");
 
         return categoryRepository.save(category);
     }

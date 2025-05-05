@@ -1,0 +1,7 @@
+com\example\financetracker\FinanceTrackerApplicationTests.class
+com\example\financetracker\SecurityConfigTest.class
+com\example\financetracker\AuthControllerTest.class
+com\example\financetracker\CategoryServiceImplTest.class
+com\example\financetracker\GlobalExceptionHandlerTest.class
+com\example\financetracker\UserServiceImplTest.class
+AuthServiceImplTest.class

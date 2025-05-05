@@ -10,7 +10,6 @@ import com.example.financetracker.service.impl.RoleServiceImpl;
 import com.example.financetracker.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Incubating;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
