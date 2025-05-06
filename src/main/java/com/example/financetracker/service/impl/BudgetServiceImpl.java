@@ -86,7 +86,7 @@ public class BudgetServiceImpl implements BudgetService {
         }
         return budget;
     }
-
+    
     @Transactional
     public BudgetEntity updateBudget(Long id, BudgetRequestDto budgetRequest, UserEntity user) {
         BudgetEntity budget = getBudgetById(id, user);

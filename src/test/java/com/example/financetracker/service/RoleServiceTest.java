@@ -1,7 +1,6 @@
 package com.example.financetracker.service;
 
 import com.example.financetracker.entity.RoleEntity;
-import com.example.financetracker.entity.UserEntity;
 import com.example.financetracker.exception.ResourceNotFoundException;
 import com.example.financetracker.repository.RoleRepository;
 import com.example.financetracker.service.impl.RoleServiceImpl;
@@ -10,9 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 

@@ -1,15 +1,18 @@
 package com.example.financetracker.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-
+@Builder
 @Entity
 @Data
 @Table(name = "transactions")
+@AllArgsConstructor
 public class TransactionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +33,6 @@ public class TransactionEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    public TransactionEntity() {}
 }
