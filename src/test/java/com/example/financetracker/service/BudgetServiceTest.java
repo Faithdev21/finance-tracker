@@ -2,7 +2,6 @@ package com.example.financetracker.service;
 
 import com.example.financetracker.dto.BudgetPeriodDto;
 import com.example.financetracker.dto.BudgetRequestDto;
-import com.example.financetracker.dto.BudgetResponseDto;
 import com.example.financetracker.entity.BudgetEntity;
 import com.example.financetracker.entity.CategoryEntity;
 import com.example.financetracker.entity.TransactionEntity;
@@ -23,7 +22,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -294,5 +292,4 @@ public class BudgetServiceTest {
                 .hasMessage("You do not have permission to access this budget");
         verify(budgetRepository, never()).delete(any(BudgetEntity.class));
     }
-
 }

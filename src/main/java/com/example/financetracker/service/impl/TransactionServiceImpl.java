@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +25,20 @@ public class TransactionServiceImpl implements TransactionService {
     private final BudgetRepository budgetRepository;
 
     public TransactionEntity createTransaction(TransactionRequestDto transactionRequest, UserEntity user) {
+
+        if (transactionRequest.amount() == null) {
+            throw new IllegalArgumentException("Amount must not be null");
+        }
+        if (transactionRequest.amount().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Amount must be positive");
+        }
+        if (transactionRequest.description() == null || transactionRequest.description().trim().isEmpty()) {
+            throw new IllegalArgumentException("Description must not be blank");
+        }
+        if (transactionRequest.categoryId() == null) {
+            throw new IllegalArgumentException("Category ID must not be null");
+        }
+
         CategoryEntity category = categoryService.getCategoryByIdAndUser(transactionRequest.categoryId(), user);
 
         TransactionEntity transaction = new TransactionEntity();
