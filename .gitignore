@@ -25,3 +25,4 @@ replay_pid*
 .idea
 users.mv.db
 users.trace.db
+.env
