@@ -40,6 +40,41 @@ public class JwtTokenUtils {
                 .signWith(SignatureAlgorithm.HS256, secret)
                 .compact();
     }
+    public String generateRefreshToken(UserDetails userDetails) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + jwtLifetime.toMillis());
+
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getUsernameFromRefreshToken(String refreshToken) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(refreshToken).getBody().getSubject();
+    }
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    public boolean validateRefreshToken(String refreshToken) {
+        try {
+            Jwts.parser().setSigningKey(secret).parseClaimsJws(refreshToken);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public String getUsername(String token) {
         return getAllClaimsFromToken(token).getSubject();

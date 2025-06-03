@@ -37,7 +37,7 @@ public class AuthControllerTest {
     void createAuthToken_ShouldReturnJwtResponse_WhenCredentialsAreValid() {
         // Arrange
         JwtRequestDto authRequest = new JwtRequestDto("user", "password");
-        JwtResponseDto jwtResponse = new JwtResponseDto("token");
+        JwtResponseDto jwtResponse = new JwtResponseDto("token", "refreshToken");
         when(authService.createAuthToken(any(JwtRequestDto.class))).thenReturn(jwtResponse);
 
         // Act

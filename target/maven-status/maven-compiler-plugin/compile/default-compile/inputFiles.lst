@@ -1,5 +1,6 @@
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\config\JwtRequestFilter.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\config\SecurityConfig.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\config\TelegramBotConfig.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\controller\AnalyticsController.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\controller\AuthController.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\controller\BudgetController.java
@@ -27,6 +28,7 @@ D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\Budget
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\CategoryEntity.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\NotificationEntity.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\RoleEntity.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\TelegramUserEntity.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\TransactionEntity.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\entity\UserEntity.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\exception\ForbiddenException.java
@@ -38,8 +40,10 @@ D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\Bu
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\CategoryRepository.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\NotificationRepository.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\RoleRepository.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\TelegramUserRepository.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\TransactionRepository.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\repository\UserRepository.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\security\JwtAuthenticationFilter.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\AuthService.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\BudgetService.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\CategoryService.java
@@ -48,10 +52,20 @@ D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\CategoryServiceImpl.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\NotificationServiceImpl.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\RoleServiceImpl.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\TelegramUserServiceImpl.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\TransactionServiceImpl.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\impl\UserServiceImpl.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\NotificationService.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\RoleService.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\TelegramUserService.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\TransactionService.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\service\UserService.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\BudgetHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\CategoryHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\CommandHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\QuestHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\StatisticsHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\handlers\TransactionHandler.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\TelegramBot.java
+D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\telegram\util\KeyboardUtil.java
 D:\JavaDev\FinanceTracker\src\main\java\com\example\financetracker\util\JwtTokenUtils.java

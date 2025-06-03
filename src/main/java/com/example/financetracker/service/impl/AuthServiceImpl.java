@@ -38,7 +38,8 @@ public class AuthServiceImpl implements AuthService {
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
         String token = jwtTokenUtils.generateToken(userDetails);
-        return new JwtResponseDto(token);
+        String refreshToken = jwtTokenUtils.generateRefreshToken(userDetails);
+        return new JwtResponseDto(token, refreshToken);
     }
 
     @Transactional

@@ -74,7 +74,7 @@ public class SecurityConfigTest {
     @BeforeEach
     void setup() {
         JwtRequestDto authRequestDto = new JwtRequestDto("testUser", "testPassword");
-        JwtResponseDto jwtResponseDto = new JwtResponseDto("token");
+        JwtResponseDto jwtResponseDto = new JwtResponseDto("token", "refreshToken");
         when(authService.createAuthToken(any(JwtRequestDto.class))).thenReturn(jwtResponseDto);
         token = "Bearer " + jwtResponseDto.getToken();
 

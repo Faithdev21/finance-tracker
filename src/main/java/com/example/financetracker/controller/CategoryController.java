@@ -20,7 +20,6 @@ public class CategoryController {
     @PostMapping("/add_category")
     public ResponseEntity<CategoryDto> createNewCategory(@RequestBody CategoryDto categoryDto) {
         CategoryEntity category = categoryService.addCategory(categoryDto);
-//        return ResponseEntity.ok(CategoryDto.fromEntity(category)); // Deprecated
         log.info("category in controller {}", category);
         return new ResponseEntity<>(CategoryDto.fromEntity(category), HttpStatus.CREATED);
     }

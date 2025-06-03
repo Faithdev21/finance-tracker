@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.financetracker.FinanceTrackerApplicationTests" time="9.26" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.example.financetracker.controller.AuthControllerTest" time="4.567" tests="2" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -10,7 +10,6 @@
     <property name="user.variant" value=""/>
     <property name="java.vendor.url" value="https://java.oracle.com/"/>
     <property name="user.timezone" value="Europe/Moscow"/>
-    <property name="org.jboss.logging.provider" value="slf4j"/>
     <property name="os.name" value="Windows 10"/>
     <property name="java.vm.specification.version" value="17"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
@@ -31,8 +30,6 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="FILE_LOG_CHARSET" value="windows-1251"/>
-    <property name="java.awt.headless" value="true"/>
     <property name="surefire.real.class.path" value="C:\Users\Rota-1\AppData\Local\Temp\surefire4504920748992358961\surefirebooter-20250603152729231_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
@@ -47,14 +44,11 @@
     <property name="localRepository" value="C:\Users\Rota-1\.m2\repository"/>
     <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
     <property name="java.io.tmpdir" value="C:\Users\Rota-1\AppData\Local\Temp\"/>
-    <property name="com.zaxxer.hikari.pool_number" value="2"/>
     <property name="java.version" value="17.0.2"/>
     <property name="user.dir" value="D:\JavaDev\FinanceTracker"/>
     <property name="os.arch" value="amd64"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="PID" value="25668"/>
     <property name="sun.os.patch.level" value=""/>
-    <property name="CONSOLE_LOG_CHARSET" value="windows-1251"/>
     <property name="native.encoding" value="Cp1251"/>
     <property name="java.library.path" value="C:\Users\Rota-1\scoop\apps\openjdk17\current\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\libnvvp;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\Docker\Docker\resources\bin;C:\ProgramData\DockerDesktop\version-bin;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\110\Tools\Binn\;C:\Program Files (x86)\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\Tools\Binn\;C:\Program Files\Microsoft SQL Server\120\DTS\Binn\;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit\;C:\Program Files\NVIDIA Corporation\Nsight Compute 2022.3.0\;C:\Program Files\Go\bin;C:\Program Files\Git\cmd;C:\Users\Rota-1\scoop\apps\openjdk17\current\bin;C:\Users\Rota-1\scoop\apps\maven\current\bin;C:\Users\Rota-1\scoop\shims;C:\Users\Rota-1\AppData\Local\Programs\Python\Python312\Scripts\;C:\Users\Rota-1\AppData\Local\Programs\Python\Python312\;C:\Users\Rota-1\AppData\Local\Programs\Python\Launcher\;C:\Users\Rota-1\AppData\Local\Microsoft\WindowsApps;C:\Users\Rota-1\AppData\Local\JetBrains\PyCharm 2023.2.3\bin;;C:\Users\Rota-1\AppData\Local\JetBrains\WebStorm 2023.3.4\bin;;C:\Users\Rota-1\AppData\Local\JetBrains\IntelliJ IDEA 2024.2.4\bin;;C:\Users\Rota-1\.dotnet\tools;D:\Microsoft VS Code\bin;C:\Users\Rota-1\AppData\Local\Microsoft\WinGet\Packages\Schniz.fnm_Microsoft.Winget.Source_8wekyb3d8bbwe;."/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -63,58 +57,6 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="contextLoads" classname="com.example.financetracker.FinanceTrackerApplicationTests" time="0.016">
-    <system-out><![CDATA[2025-06-03T15:28:19.624+03:00  INFO 25668 --- [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.example.financetracker.FinanceTrackerApplicationTests]: FinanceTrackerApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2025-06-03T15:28:19.739+03:00  INFO 25668 --- [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.example.financetracker.FinanceTrackerApplication for test class com.example.financetracker.FinanceTrackerApplicationTests
-
-  .   ____          _            __ _ _
- /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
-( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
- \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
-  '  |____| .__|_| |_|_| |_\__, | / / / /
- =========|_|==============|___/=/_/_/_/
-
- :: Spring Boot ::                (v3.4.4)
-
-2025-06-03T15:28:19.897+03:00  INFO 25668 --- [           main] c.e.f.FinanceTrackerApplicationTests     : Starting FinanceTrackerApplicationTests using Java 17.0.2 with PID 25668 (started by Rota-1 in D:\JavaDev\FinanceTracker)
-2025-06-03T15:28:19.898+03:00  INFO 25668 --- [           main] c.e.f.FinanceTrackerApplicationTests     : The following 1 profile is active: "prod"
-2025-06-03T15:28:21.353+03:00  INFO 25668 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2025-06-03T15:28:21.615+03:00  INFO 25668 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 253 ms. Found 7 JPA repository interfaces.
-2025-06-03T15:28:22.017+03:00  INFO 25668 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
-2025-06-03T15:28:22.948+03:00  INFO 25668 --- [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection org.postgresql.jdbc.PgConnection@7f2717b3
-2025-06-03T15:28:22.949+03:00  INFO 25668 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
-2025-06-03T15:28:22.982+03:00  INFO 25668 --- [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/finance (PostgreSQL 16.0)
-2025-06-03T15:28:22.995+03:00  WARN 25668 --- [           main] o.f.c.internal.database.base.Database    : Flyway upgrade recommended: PostgreSQL 16.0 is newer than this version of Flyway and support has not been tested. The latest supported version of PostgreSQL is 15.
-2025-06-03T15:28:23.203+03:00  INFO 25668 --- [           main] o.f.core.internal.command.DbValidate     : Successfully validated 1 migration (execution time 00:00.141s)
-2025-06-03T15:28:23.429+03:00  INFO 25668 --- [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 1
-2025-06-03T15:28:23.430+03:00  INFO 25668 --- [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
-2025-06-03T15:28:23.536+03:00  INFO 25668 --- [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2025-06-03T15:28:23.581+03:00  INFO 25668 --- [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2025-06-03T15:28:23.685+03:00  INFO 25668 --- [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2025-06-03T15:28:23.753+03:00  WARN 25668 --- [           main] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
-2025-06-03T15:28:23.760+03:00  INFO 25668 --- [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
-	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-2)']
-	Database driver: undefined/unknown
-	Database version: 16.0
-	Autocommit mode: undefined/unknown
-	Isolation level: undefined/unknown
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2025-06-03T15:28:24.430+03:00  INFO 25668 --- [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2025-06-03T15:28:26.792+03:00  INFO 25668 --- [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2025-06-03T15:28:27.405+03:00  INFO 25668 --- [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name userServiceImpl
-2025-06-03T15:28:27.714+03:00  INFO 25668 --- [           main] c.e.financetracker.telegram.TelegramBot  : Бот запущен в 2025-06-03T12:28:27Z
-2025-06-03T15:28:27.849+03:00  WARN 25668 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
-2025-06-03T15:28:28.440+03:00 ERROR 25668 --- [gram Connection] o.t.t.u.DefaultBotSession                : Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
-
-org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException: Error executing org.telegram.telegrambots.meta.api.methods.updates.GetUpdates query: [409] Conflict: terminated by other getUpdates request; make sure that only one bot instance is running
-	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseInternal(PartialBotApiMethod.java:54) ~[telegrambots-meta-6.8.0.jar:na]
-	at org.telegram.telegrambots.meta.api.methods.PartialBotApiMethod.deserializeResponseArray(PartialBotApiMethod.java:39) ~[telegrambots-meta-6.8.0.jar:na]
-	at org.telegram.telegrambots.meta.api.methods.updates.GetUpdates.deserializeResponse(GetUpdates.java:83) ~[telegrambots-meta-6.8.0.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.getUpdatesFromServer(DefaultBotSession.java:258) ~[telegrambots-6.8.0.jar:na]
-	at org.telegram.telegrambots.updatesreceivers.DefaultBotSession$ReaderThread.run(DefaultBotSession.java:188) ~[telegrambots-6.8.0.jar:na]
-
-2025-06-03T15:28:28.856+03:00  INFO 25668 --- [           main] c.e.f.FinanceTrackerApplicationTests     : Started FinanceTrackerApplicationTests in 9.103 seconds (process running for 58.188)
-]]></system-out>
-  </testcase>
+  <testcase name="createAuthToken_ShouldReturnJwtResponse_WhenCredentialsAreValid" classname="com.example.financetracker.controller.AuthControllerTest" time="4.212"/>
+  <testcase name="createNewUser_ShouldReturnUserDto_WhenRegistrationIsValid" classname="com.example.financetracker.controller.AuthControllerTest" time="0.019"/>
 </testsuite>

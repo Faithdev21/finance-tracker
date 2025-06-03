@@ -35,7 +35,6 @@ public class TransactionController {
     ) {
         UserEntity user = getUserFromAuthentication(authentication);
         TransactionEntity transaction = transactionService.createTransaction(request, user);
-//        return ResponseEntity.ok(transactionService.toResponse(transaction)); // Deprecated
         return new ResponseEntity<>(transactionService.toResponse(transaction), HttpStatus.CREATED);
     }
 

@@ -1,4 +1,4 @@
-# Created at 2025-05-05T14:41:03.620
+# Created at 2025-06-03T15:27:29.453
 Boot Manifest-JAR contains absolute paths in classpath 'D:\JavaDev\FinanceTracker\target\test-classes'
 Hint: <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 'other' has different root
