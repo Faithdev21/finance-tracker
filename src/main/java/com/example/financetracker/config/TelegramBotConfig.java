@@ -12,7 +12,6 @@ public class TelegramBotConfig {
     @Bean
     public RestClient restClient() {
         return RestClient.builder()
-//                .requestTimeout(Duration.ofSeconds(10))
                 .build();
     }
 }

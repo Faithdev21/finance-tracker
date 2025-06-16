@@ -139,8 +139,16 @@ public class TransactionHandler {
                 bot.sendMessage(chatId, "Транзакция успешно выполнена!\n" +
                         "Сумма: " + userData.get(chatId).get("amount") + "\n" +
                         "Описание: " + userData.get(chatId).get("description") + "\n" +
-                        "Категория: " + messageText + "\n" +
-                        "Тип: " + userData.get(chatId).get("type"));
+                        "Категория: " + messageText + "\n");
+
+                Object notificationsObj = response.get("notifications");
+                if (notificationsObj instanceof List<?> notificationsList) {
+                    for (Object notification : notificationsList) {
+                        if (notification instanceof String notificationMessage) {
+                            bot.sendMessage(chatId, notificationMessage);
+                        }
+                    }
+                }
                 resetUserState(chatId);
                 bot.sendMainMenu(chatId);
             } catch (HttpClientErrorException e) {

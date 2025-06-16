@@ -1,9 +1,6 @@
 package com.example.financetracker.controller;
 
-import com.example.financetracker.dto.PaginatedTransactionResponseDto;
-import com.example.financetracker.dto.TransactionFilterRequestDto;
-import com.example.financetracker.dto.TransactionRequestDto;
-import com.example.financetracker.dto.TransactionResponseDto;
+import com.example.financetracker.dto.*;
 import com.example.financetracker.entity.TransactionEntity;
 import com.example.financetracker.exception.ResourceNotFoundException;
 import com.example.financetracker.service.impl.TransactionServiceImpl;
@@ -19,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -29,13 +27,17 @@ public class TransactionController {
     private final UserService userService;
 
     @PostMapping
-    public ResponseEntity<TransactionResponseDto> createTransaction(
+    public ResponseEntity<TransactionWithNotificationsResponseDto> createTransaction(
             @RequestBody @Valid TransactionRequestDto request,
             Authentication authentication
     ) {
         UserEntity user = getUserFromAuthentication(authentication);
         TransactionEntity transaction = transactionService.createTransaction(request, user);
-        return new ResponseEntity<>(transactionService.toResponse(transaction), HttpStatus.CREATED);
+        TransactionResponseDto transactionDto = transactionService.toResponse(transaction);
+        List<String> notifications = transactionService.getLastGeneratedNotifications();
+
+        TransactionWithNotificationsResponseDto response = new TransactionWithNotificationsResponseDto(transactionDto, notifications);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping

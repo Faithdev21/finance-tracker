@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -23,6 +24,13 @@ public class TransactionServiceImpl implements TransactionService {
     private final CategoryServiceImpl categoryService;
     private final BudgetServiceImpl budgetService;
     private final BudgetRepository budgetRepository;
+    private final NotificationServiceImpl notificationService;
+    private final List<String> lastGeneratedNotifications = new ArrayList<>();
+
+    @Override
+    public List<String> getLastGeneratedNotifications() {
+        return new ArrayList<>(lastGeneratedNotifications);
+    }
 
     public TransactionEntity createTransaction(TransactionRequestDto transactionRequest, UserEntity user) {
 
@@ -51,8 +59,13 @@ public class TransactionServiceImpl implements TransactionService {
         TransactionEntity savedTransaction = transactionRepository.save(transaction);
 
         List<BudgetEntity> budgets = budgetRepository.findByUserIdAndCategoryId(user.getId(), category.getId());
+        lastGeneratedNotifications.clear();
         for (BudgetEntity budget : budgets) {
             budgetService.checkBudgetStatus(budget);
+            String message = notificationService.getLastNotificationMessageFor(budget.getUser());
+            if (message != null) {
+                lastGeneratedNotifications.add(message);
+            }
         }
 
         return savedTransaction;
