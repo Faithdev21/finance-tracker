@@ -10,6 +10,7 @@ import com.example.financetracker.repository.BudgetRepository;
 import com.example.financetracker.repository.TransactionRepository;
 import com.example.financetracker.service.impl.BudgetServiceImpl;
 import com.example.financetracker.service.impl.CategoryServiceImpl;
+import com.example.financetracker.service.impl.NotificationServiceImpl;
 import com.example.financetracker.service.impl.TransactionServiceImpl;
 import org.hibernate.Transaction;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,10 +42,13 @@ public class TransactionalServiceTest {
     private CategoryServiceImpl categoryService;
 
     @Mock
-    BudgetServiceImpl budgetService;
+    private BudgetServiceImpl budgetService;
 
     @Mock
-    BudgetRepository budgetRepository;
+    private BudgetRepository budgetRepository;
+
+    @Mock
+    private NotificationServiceImpl notificationService;
 
     @InjectMocks
     TransactionServiceImpl transactionService;
@@ -78,7 +82,7 @@ public class TransactionalServiceTest {
                 .endDate(LocalDateTime.now().plusDays(20))
                 .build();
 
-        transactionRequestDto = new TransactionRequestDto(BigDecimal.valueOf(500), "Test Transation", 1L);
+        transactionRequestDto = new TransactionRequestDto(BigDecimal.valueOf(500), "Test Transaction", 1L);
     }
 
     @Test
@@ -96,6 +100,7 @@ public class TransactionalServiceTest {
         when(categoryService.getCategoryByIdAndUser(1L, user)).thenReturn(category);
         when(transactionRepository.save(any(TransactionEntity.class))).thenReturn(transaction);
         when(budgetRepository.findByUserIdAndCategoryId(user.getId(), category.getId())).thenReturn(Collections.singletonList(budget));
+        when(notificationService.getLastNotificationMessageFor(user)).thenReturn(null);
 
         // Act
         TransactionEntity result = transactionService.createTransaction(transactionRequestDto, user);
