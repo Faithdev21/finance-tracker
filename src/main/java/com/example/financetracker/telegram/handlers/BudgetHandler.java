@@ -1,10 +1,8 @@
 package com.example.financetracker.telegram.handlers;
 
-import aj.org.objectweb.asm.TypeReference;
-import com.example.financetracker.service.TelegramUserService;
 import com.example.financetracker.service.impl.TelegramUserServiceImpl;
 import com.example.financetracker.telegram.TelegramBot;
-import com.example.financetracker.telegram.UserState;
+import com.example.financetracker.telegram.util.CalendarInlineKeyboardUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +16,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -49,6 +47,8 @@ public class BudgetHandler {
         AWAITING_BUDGET_PERIOD,
         AWAITING_BUDGET_START_DATE,
         AWAITING_BUDGET_END_DATE,
+        AWAITING_BUDGET_START_DATE_CALENDAR,
+        AWAITING_BUDGET_END_DATE_CALENDAR,
         AWAITING_BUDGET_AMOUNT_FOR_UPDATE,
         AWAITING_BUDGET_PERIOD_FOR_UPDATE,
         AWAITING_BUDGET_START_DATE_FOR_UPDATE,
@@ -198,7 +198,7 @@ public class BudgetHandler {
         userData.remove(chatId);
     }
 
-    public void handleCallbackQuery(long chatId, TelegramBot bot, String callbackData) {
+    public void handleCallbackQuery(long chatId, TelegramBot bot, String callbackData, int messageId) {
         if (callbackData.startsWith("set_budget_category_")) {
             String categoryId = callbackData.replace("set_budget_category_", "");
             userData.get(chatId).put("categoryId", categoryId);
@@ -212,6 +212,56 @@ public class BudgetHandler {
         } else if (callbackData.startsWith("delete_budget_budget_")) {
             String budgetId = callbackData.replace("delete_budget_budget_", "");
             handleDeleteBudgetConfirmed(chatId, bot, budgetId);
+        } else if (callbackData.startsWith("budget:start_date:select:")) {
+            String selectedDateStr = callbackData.replace("budget:start_date:select:", "");
+            LocalDate date = LocalDate.parse(selectedDateStr);
+            userData.get(chatId).put("startDate", date.atStartOfDay().toString());
+
+            userStates.put(chatId, UserState.AWAITING_BUDGET_END_DATE_CALENDAR);
+            bot.deleteMessage(chatId, messageId);
+            bot.sendMessageWithInlineKeyboard(
+                    chatId,
+                    "📅 Выберите *дату конца* бюджета:",
+                    CalendarInlineKeyboardUtil.generateDayKeyboard("budget", "end_date", date)
+            );
+        } else if (callbackData.startsWith("budget:end_date:select:")) {
+            String selectedDateStr = callbackData.replace("budget:end_date:select:", "");
+            LocalDate endDate = LocalDate.parse(selectedDateStr);
+
+            String startDateStr = userData.get(chatId).get("startDate");
+            LocalDate startDate = LocalDate.parse(startDateStr.substring(0, 10));
+
+            if (endDate.isBefore(startDate)) {
+                bot.sendMessage(chatId, "⚠️ Дата окончания не может быть раньше даты начала. Попробуйте снова.");
+                return;
+            }
+
+            userData.get(chatId).put("endDate", endDate.atStartOfDay().toString());
+            bot.deleteMessage(chatId, messageId);
+
+            sendBudgetToApi(chatId, bot);
+        } else if (callbackData.startsWith("budget:start_date:nav:")) {
+            String newMonthStr = callbackData.replace("budget:start_date:nav:", "");
+            LocalDate newDate = LocalDate.parse(newMonthStr);
+
+            bot.deleteMessage(chatId, messageId);
+
+            bot.sendMessageWithInlineKeyboard(
+                    chatId,
+                    "📅 Выберите *дату начала* бюджета:",
+                    CalendarInlineKeyboardUtil.generateDayKeyboard("budget", "start_date", newDate)
+            );
+        } else if (callbackData.startsWith("budget:end_date:nav:")) {
+            String newMonthStr = callbackData.replace("budget:end_date:nav:", "");
+            LocalDate newDate = LocalDate.parse(newMonthStr);
+
+            bot.deleteMessage(chatId, messageId);
+
+            bot.sendMessageWithInlineKeyboard(
+                    chatId,
+                    "📅 Выберите *дату конца* бюджета:",
+                    CalendarInlineKeyboardUtil.generateDayKeyboard("budget", "end_date", newDate)
+            );
         }
     }
 
@@ -264,12 +314,6 @@ public class BudgetHandler {
                 break;
             case AWAITING_BUDGET_PERIOD:
                 handleBudgetPeriodInput(chatId, bot, messageText, data);
-                break;
-            case AWAITING_BUDGET_START_DATE:
-                handleBudgetStartDateInput(chatId, bot, messageText, data);
-                break;
-            case AWAITING_BUDGET_END_DATE:
-                handleBudgetEndDateInput(chatId, bot, messageText, data);
                 break;
             case AWAITING_BUDGET_AMOUNT_FOR_UPDATE:
                 handleBudgetAmountInput(chatId, bot, messageText, data, UserState.AWAITING_BUDGET_PERIOD_FOR_UPDATE);
@@ -328,31 +372,16 @@ public class BudgetHandler {
         }
         period = changePeriodLanguageFromRussianToEnglish(period);
         data.put("period", period);
-        userStates.put(chatId, UserState.AWAITING_BUDGET_START_DATE);
-        bot.sendMessage(chatId, "Введите дату начала для бюджета в формате ГГГГ-ММ-ДД или используйте /cancel для отмены");
+        userStates.put(chatId, UserState.AWAITING_BUDGET_START_DATE_CALENDAR);
+        LocalDate today = LocalDate.now();
+        bot.sendMessageWithInlineKeyboard(chatId, "📅 Выберите *дату начала* бюджета:",
+                CalendarInlineKeyboardUtil.generateDayKeyboard("budget", "start_date", LocalDate.now()));
     }
 
-    private void handleBudgetStartDateInput(long chatId, TelegramBot bot, String messageText, Map<String, String> data) {
-        try {
-            LocalDateTime startDate = LocalDateTime.parse(messageText.trim() + "T00:00:00");
-            data.put("startDate", startDate.toString());
-            userStates.put(chatId, UserState.AWAITING_BUDGET_END_DATE);
-            bot.sendMessage(chatId, "Введите дату окончания бюджета в формате ГГГГ-ММ-ДД (например, 2025-06-15) или используйте /cancel для отмены:");
-        } catch (DateTimeParseException e) {
-            bot.sendMessage(chatId, "Пожалуйста, введите дату в формате ГГГГ-ММ-ДД например, 2025-06-15). Попробуйте снова.");
-        }
-    }
+    private void sendBudgetToApi(long chatId, TelegramBot bot) {
+        Map<String, String> data = userData.get(chatId);
 
-    private void handleBudgetEndDateInput(long chatId, TelegramBot bot, String messageText, Map<String, String> data) {
         try {
-            LocalDateTime endDate = LocalDateTime.parse(messageText.trim() + "T00:00:00");
-            LocalDateTime startDate = LocalDateTime.parse(data.get("startDate"));
-            if (endDate.isBefore(startDate)) {
-                bot.sendMessage(chatId, "Дата окончания не может быть раньше даты начала.");
-                return;
-            }
-            data.put("endDate", endDate.toString());
-
             String jwtToken = telegramUserService.getJwtToken(chatId);
             if (jwtToken == null) {
                 bot.sendMessage(chatId, "Пожалуйста, выполните вход с помощью команды /login.");
@@ -360,12 +389,6 @@ public class BudgetHandler {
                 bot.sendMainMenu(chatId);
                 return;
             }
-            log.info("JWT TOKEN {}", jwtToken);
-            log.info(data.get("categoryId"));
-            log.info(data.get("limitAmount"));
-            log.info(data.get("period"));
-            log.info(data.get("startDate"));
-            log.info(data.get("endDate"));
 
             Map<String, String> requestBody = new HashMap<>();
             requestBody.put("categoryId", data.get("categoryId"));
@@ -375,36 +398,24 @@ public class BudgetHandler {
             requestBody.put("endDate", data.get("endDate"));
 
             String url = urlAPI + "/budgets";
-            Map<String, Object> response = restClient.post()
+            restClient.post()
                     .uri(url)
                     .header("Authorization", "Bearer " + jwtToken)
                     .body(requestBody)
                     .retrieve()
                     .body(Map.class);
-            bot.sendMessage(chatId, "Бюджет успешно создан");
-            resetUserState(chatId);
-            bot.sendMainMenu(chatId);
-            return;
 
-        } catch (DateTimeParseException e) {
-            bot.sendMessage(chatId, "Пожалуйста, введите дату в формате ГГГГ-ММ-ДД (например, 2023-10-31). Попробуйте снова.");
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-//                bot.refreshToken(chatId);
-                bot.sendMessage(chatId, "Токен истёк, пробуем обновить. Повторите попытку.");
-            } else if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                bot.sendMessage(chatId, "Категория не найдена.");
-            } else {
-                bot.sendMessage(chatId, "Ошибка при создании бюджета: " + e.getMessage());
-            }
+            bot.sendMessage(chatId, "✅ Бюджет успешно создан");
             resetUserState(chatId);
             bot.sendMainMenu(chatId);
+
         } catch (Exception e) {
-            bot.sendMessage(chatId, "Произошла ошибка: " + e.getMessage());
+            bot.sendMessage(chatId, "❌ Ошибка при создании: " + e.getMessage());
             resetUserState(chatId);
             bot.sendMainMenu(chatId);
         }
     }
+
     private ReplyKeyboardMarkup createPeriodKeyboard() {
         ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
         List<KeyboardRow> keyboard = new ArrayList<>();

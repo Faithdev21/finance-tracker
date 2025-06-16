@@ -147,6 +147,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (budgetHandler.isUserInBudgetState(chatId)) {
                 budgetHandler.handleBudgetInput(chatId, this, messageText);
                 processedMessageIds.add(messageId);
+                return;
             }
 
             UserState state = userStates.get(chatId);
@@ -178,7 +179,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (callbackData.startsWith("statistics:")) {
                 statisticsHandler.handleCallback(chatId, callbackData, this, messageId);
             } else {
-                budgetHandler.handleCallbackQuery(chatId, this, callbackData);
+                budgetHandler.handleCallbackQuery(chatId, this, callbackData, messageId);
             }
         }
     }
@@ -315,7 +316,7 @@ public class TelegramBot extends TelegramLongPollingBot {
         transactionHandler.resetUserState(chatId);
         budgetHandler.resetUserState(chatId);
         questHandler.resetQuestState(chatId);
-        statisticsHandler.cancelStatFlow(chatId); // новое
+        statisticsHandler.cancelStatFlow(chatId);
 
         removeKeyboard(chatId, "Действие отменено.");
         sendMainMenu(chatId);

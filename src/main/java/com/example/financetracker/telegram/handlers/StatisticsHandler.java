@@ -3,24 +3,17 @@ package com.example.financetracker.telegram.handlers;
 import com.example.financetracker.service.TelegramUserService;
 import com.example.financetracker.telegram.TelegramBot;
 import com.example.financetracker.telegram.util.CalendarInlineKeyboardUtil;
-import com.example.financetracker.telegram.util.CalendarInlineKeyboardUtil;
 import com.example.financetracker.telegram.util.StatState;
 import com.example.financetracker.telegram.util.UserStateContextUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +53,7 @@ public class StatisticsHandler {
         userContexts.put(chatId, context);
 
         LocalDate now = LocalDate.now();
-        InlineKeyboardMarkup calendar = CalendarInlineKeyboardUtil.generateDayKeyboard("daily_start", now);
+        InlineKeyboardMarkup calendar = CalendarInlineKeyboardUtil.generateDayKeyboard("statistics", "daily_start", now);
         bot.sendMessageWithInlineKeyboard(chatId, "Выберите начальную дату", calendar);
     }
 
@@ -159,12 +152,12 @@ public class StatisticsHandler {
                         context.setState(StatState.AWAITING_DAILY_END);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите конечную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("daily_end", date));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","daily_end", date));
                     } else if (action.equals("nav")) {
                         LocalDate newDate = LocalDate.parse(value);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите начальную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("daily_start", newDate));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","daily_start", newDate));
                     }
                     break;
 
@@ -178,7 +171,7 @@ public class StatisticsHandler {
                         LocalDate newDate = LocalDate.parse(value);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите конечную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("daily_end", newDate));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","daily_end", newDate));
                     }
                     break;
 
@@ -189,12 +182,12 @@ public class StatisticsHandler {
                         context.setState(StatState.AWAITING_BALANCE_END);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите конечную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("balance_end", chosen));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","balance_end", chosen));
                     } else if (action.equals("nav")) {
                         LocalDate newDate = LocalDate.parse(value);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите начальную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("balance_start", newDate));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","balance_start", newDate));
                     }
                     break;
 
@@ -208,7 +201,7 @@ public class StatisticsHandler {
                         LocalDate newDate = LocalDate.parse(value);
                         bot.deleteMessage(chatId, messageId);
                         bot.sendMessageWithInlineKeyboard(chatId, "Выберите конечную дату:",
-                                CalendarInlineKeyboardUtil.generateDayKeyboard("balance_end", newDate));
+                                CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","balance_end", newDate));
                     }
                     break;
 
@@ -237,7 +230,6 @@ public class StatisticsHandler {
                     .retrieve()
                     .body(String.class);
 
-            // Десериализация и вывод красивого сообщения
             ObjectMapper objectMapper = new ObjectMapper();
             List<Map<String, Object>> results = objectMapper.readValue(response, List.class);
 
@@ -277,7 +269,7 @@ public class StatisticsHandler {
         userContexts.put(chatId, context);
 
         LocalDate now = LocalDate.now();
-        InlineKeyboardMarkup calendar = CalendarInlineKeyboardUtil.generateDayKeyboard("balance_start", now);
+        InlineKeyboardMarkup calendar = CalendarInlineKeyboardUtil.generateDayKeyboard("statistics","balance_start", now);
         bot.sendMessageWithInlineKeyboard(chatId, "Выберите начальную дату", calendar);
     }
 

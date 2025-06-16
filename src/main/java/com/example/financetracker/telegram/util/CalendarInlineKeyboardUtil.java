@@ -49,13 +49,13 @@ public class CalendarInlineKeyboardUtil {
         return btn;
     }
 
-    public static InlineKeyboardMarkup generateDayKeyboard(String type, LocalDate refDate) {
+    public static InlineKeyboardMarkup generateDayKeyboard(String prefix, String type, LocalDate refDate) {
         List<List<InlineKeyboardButton>> rows = new ArrayList<>();
 
         List<InlineKeyboardButton> navRow = Arrays.asList(
-                button("◀", "statistics:" + type + ":nav:" + refDate.minusMonths(1)),
+                button("◀", prefix + ":" + type + ":nav:" + refDate.minusMonths(1)),
                 button(refDate.format(DateTimeFormatter.ofPattern("LLLL yyyy", new Locale("ru"))), "noop"),
-                button("▶", "statistics:" + type + ":nav:" + refDate.plusMonths(1))
+                button("▶", prefix + ":" + type + ":nav:" + refDate.plusMonths(1))
         );
         rows.add(navRow);
 
@@ -67,7 +67,7 @@ public class CalendarInlineKeyboardUtil {
 
         LocalDate firstDay = refDate.withDayOfMonth(1);
         int daysInMonth = refDate.lengthOfMonth();
-        int firstWeekDay = firstDay.getDayOfWeek().getValue(); // 1=ПН ... 7=ВС
+        int firstWeekDay = firstDay.getDayOfWeek().getValue();
 
         List<InlineKeyboardButton> row = new ArrayList<>();
 
@@ -82,7 +82,7 @@ public class CalendarInlineKeyboardUtil {
             }
 
             LocalDate date = refDate.withDayOfMonth(day);
-            row.add(button(String.valueOf(day), "statistics:" + type + ":select:" + date));
+            row.add(button(String.valueOf(day), prefix + ":" + type + ":select:" + date));
         }
 
         if (!row.isEmpty()) {

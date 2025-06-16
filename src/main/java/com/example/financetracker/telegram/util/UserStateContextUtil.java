@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Data
 public class UserStateContextUtil {
-    private StatState state; // текущее состояние (start_date, end_date и т.д.)
+    private StatState state;
     private LocalDate startDate;
     private LocalDate endDate;
 

@@ -2,12 +2,9 @@ package com.example.financetracker.service.impl;
 
 import com.example.financetracker.entity.BudgetEntity;
 import com.example.financetracker.entity.NotificationEntity;
-import com.example.financetracker.entity.TelegramUserEntity;
 import com.example.financetracker.entity.UserEntity;
 import com.example.financetracker.repository.NotificationRepository;
-import com.example.financetracker.repository.TelegramUserRepository;
 import com.example.financetracker.service.NotificationService;
-import com.example.financetracker.telegram.TelegramBot;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,8 +20,6 @@ import java.util.Optional;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final TelegramUserRepository telegramUserRepository;
-    private final TelegramBot telegramBot;
 
     @Transactional
     public void sendWarningNotification(BudgetEntity budget, BigDecimal currentSpending) {
