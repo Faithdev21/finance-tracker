@@ -1,0 +1,12 @@
+package com.example.financetracker.telegram.util;
+
+public enum StatState {
+    AWAITING_MONTHLY_START,
+    AWAITING_MONTHLY_END,
+    AWAITING_DAILY_START,
+    AWAITING_DAILY_END,
+    AWAITING_BALANCE_START,
+    AWAITING_BALANCE_END,
+    AWAITING_CATEGORY_START,
+    AWAITING_CATEGORY_END
+}

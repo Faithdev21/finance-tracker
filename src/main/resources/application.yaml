@@ -4,13 +4,13 @@ server:
     context-path: /financeTracker
 jwt:
   secret: aaa7a2bec968fe51e87460cf45a4a520107a8446046549586efb35383bbac0397e033a404da1a8bf1cb4ce2a98f8d605e6df3cbe3ea52efb4d37b013bb9333a8d3228c0b02c756bcaabc6b903d751b0a4f69beee507cc8ed73c6a9744d99864acb9778941296fd0cfe007d8004eefa5586621730ca0e82f1c1589db60ac8a9638cf5fa7051314b505bd4ec65ef344ebc3bdce0ce649bf19f4fc530ce38c14fe39acbf986f5c55f7069e90a0d78d401861eebef7a6860bcf53fd805547b4552ff913482144fa9bdcae7d7ebef3e14777a7882436f6a6cc3b26e29292e4223cfaf5e3eab72bd6b47479cdab52fa63fa4418db95874c7e9179aee9a0ec8b1370d4d
-  lifetime: 100m
+  lifetime: 1000m
   refresh:
     lifetime: 1000000000m
 telegram:
   bot:
     token: 7803052468:AAHRvEjz3AqiFzyD_Pp-MZY116m2p7NzsDM
-    username: FinanceTraccckerBot
+    username: TestFinanceTraccckerBot
 spring:
   profiles:
     active: prod

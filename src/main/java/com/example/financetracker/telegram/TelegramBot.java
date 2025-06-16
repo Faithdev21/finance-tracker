@@ -6,19 +6,21 @@ import com.example.financetracker.util.JwtTokenUtils;
 import com.example.financetracker.service.TelegramUserService;
 import com.example.financetracker.telegram.handlers.*;
 import com.example.financetracker.telegram.util.KeyboardUtil;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -28,10 +30,7 @@ import org.springframework.web.client.RestClient;
 import jakarta.annotation.PostConstruct;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -79,6 +78,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     private final long botStartTime = Instant.now().getEpochSecond();
 
+    private final Set<Integer> processedMessageIds = Collections.synchronizedSet(new HashSet<>());
+
 
     @PostConstruct
     public void init() {
@@ -114,42 +115,79 @@ public class TelegramBot extends TelegramLongPollingBot {
                 return;
             }
 
+            if (processedMessageIds.contains(messageId)) {
+                log.info("Сообщение с messageId={} уже обработано, игнорируем", messageId);
+                return;
+            }
+
             if (messageText.equals("/cancel")) {
                 handleCancel(chatId);
+                processedMessageIds.add(messageId);
                 return;
             }
 
             if (questHandler.isUserInQuest(chatId)) {
                 questHandler.handleQuestInput(chatId, messageText);
+                processedMessageIds.add(messageId);
                 return;
             }
 
             if (transactionHandler.isUserInTransactionState(chatId)) {
                 transactionHandler.handlePerformTransaction(chatId, this, messageText);
+                processedMessageIds.add(messageId);
                 return;
             }
 
             if (categoryHandler.isUserInCategoryAddingState(chatId)) {
                 categoryHandler.handleAddCategory(chatId, this, messageText);
+                processedMessageIds.add(messageId);
                 return;
+            }
+
+            if (budgetHandler.isUserInBudgetState(chatId)) {
+                budgetHandler.handleBudgetInput(chatId, this, messageText);
+                processedMessageIds.add(messageId);
             }
 
             UserState state = userStates.get(chatId);
             if (state != null) {
                 state.addMessageId(messageId);
                 handleUserState(chatId, messageText, state);
+                processedMessageIds.add(messageId);
             } else if (messageText.equals("/start")) {
                 commandHandler.handleStartCommand(chatId, this);
+                processedMessageIds.add(messageId);
             } else if (messageText.equals("/login")) {
                 startLoginProcess(chatId);
+                processedMessageIds.add(messageId);
             } else if (messageText.equals("/register")) {
                 startRegistrationProcess(chatId);
+                processedMessageIds.add(messageId);
             } else if (messageText.equals("/logout")) {
                 handleLogout(chatId);
+                processedMessageIds.add(messageId);
             } else {
                 handleAuthenticatedAction(chatId, messageText);
+                processedMessageIds.add(messageId);
+            }
+        } else if (update.hasCallbackQuery()) {
+            long chatId = update.getCallbackQuery().getMessage().getChatId();
+            String callbackData = update.getCallbackQuery().getData();
+            int messageId = update.getCallbackQuery().getMessage().getMessageId();
+
+            if (callbackData.startsWith("statistics:")) {
+                statisticsHandler.handleCallback(chatId, callbackData, this, messageId);
+            } else {
+                budgetHandler.handleCallbackQuery(chatId, this, callbackData);
             }
         }
+    }
+
+    @Scheduled(fixedRate = 3600000)
+    private void clearOldProcessedMessages() {
+        int sizeBeforeClear = processedMessageIds.size();
+        processedMessageIds.clear();
+        log.info("Очищено {} обработанных сообщений", sizeBeforeClear);
     }
 
     private void startLoginProcess(long chatId) {
@@ -273,10 +311,12 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
 
     private void handleCancel(long chatId) {
-        userStates.remove(chatId);
         categoryHandler.resetUserState(chatId);
         transactionHandler.resetUserState(chatId);
+        budgetHandler.resetUserState(chatId);
         questHandler.resetQuestState(chatId);
+        statisticsHandler.cancelStatFlow(chatId); // новое
+
         removeKeyboard(chatId, "Действие отменено.");
         sendMainMenu(chatId);
     }
@@ -287,6 +327,10 @@ public class TelegramBot extends TelegramLongPollingBot {
             if (!jwtTokenUtils.validateToken(jwtToken)) {
                 refreshToken(chatId);
                 jwtToken = telegramUserService.getJwtToken(chatId);
+            }
+
+            if (budgetHandler.isUserInBudgetState(chatId)) {
+                return;
             }
             switch (messageText) {
                 case "📊 Статистика":
@@ -302,16 +346,16 @@ public class TelegramBot extends TelegramLongPollingBot {
                     sendTransactionsMenu(chatId);
                     break;
                 case "📅 Месячная статистика":
-                    statisticsHandler.handleMonthlyStatistics(chatId, this);
+                    statisticsHandler.startMonthlyStatFlow(chatId, this);
                     break;
                 case "📈 Ежедневная статистика":
-                    statisticsHandler.handleDailyStatistics(chatId, this);
+                    statisticsHandler.startDailyStatFlow(chatId, this);
                     break;
                 case "📊 Статистика по категориям":
-                    statisticsHandler.handleCategoryStatistics(chatId, this);
+                    statisticsHandler.startCategoryStatFlow(chatId, this);
                     break;
                 case "💵 Итоговая сумма":
-                    statisticsHandler.handleBalanceSummary(chatId, this);
+                    statisticsHandler.startBalanceStatFlow(chatId, this);
                     break;
                 case "📝 Установить бюджет":
                     budgetHandler.handleSetBudget(chatId, this);
@@ -481,6 +525,21 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    public int sendMessageWithInlineKeyboard(long chatId, String text, InlineKeyboardMarkup keyboard) {
+        SendMessage message = new SendMessage();
+        message.setParseMode("MarkdownV2");
+        message.setChatId(String.valueOf(chatId));
+        message.setText(escapeMarkdownV2(text));
+        message.setReplyMarkup(keyboard);
+        try {
+            Message sentMessage = execute(message);
+            return sentMessage.getMessageId();
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
     public void removeKeyboard(long chatId, String text) {
         SendMessage message = new SendMessage();
         message.setParseMode("MarkdownV2");
@@ -493,7 +552,7 @@ public class TelegramBot extends TelegramLongPollingBot {
             e.printStackTrace();
         }
     }
-    private void deleteMessages(long chatId, List<Integer> messageIds) {
+    public void deleteMessages(long chatId, List<Integer> messageIds) {
         for (Integer messageId : messageIds) {
             try {
                 DeleteMessage deleteMessage = new DeleteMessage();
@@ -503,6 +562,24 @@ public class TelegramBot extends TelegramLongPollingBot {
             } catch (TelegramApiException e) {
                 log.warn("Не удалось удалить сообщение с ID {}: {}", messageId, e.getMessage());
             }
+        }
+    }
+
+    public void deleteMessage(long chatId, int messageId) {
+        deleteMessages(chatId, Collections.singletonList(messageId));
+    }
+
+    public void editMessageWithInlineKeyboard(long chatId, int messageId, String text, InlineKeyboardMarkup keyboard) {
+        EditMessageText editMessage = new EditMessageText();
+        editMessage.setChatId(String.valueOf(chatId));
+        editMessage.setMessageId(messageId);
+        editMessage.setText(escapeMarkdownV2(text));
+        editMessage.setParseMode("MarkdownV2");
+        editMessage.setReplyMarkup(keyboard);
+        try {
+            execute(editMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
         }
     }
 
@@ -540,48 +617,5 @@ public class TelegramBot extends TelegramLongPollingBot {
                 .replace(".", "\\.")
                 .replace("!", "\\!");
     }
-
-}
-
-class UserState {
-    @Getter
-    private final State state;
-    private final Map<String, String> data;
-    private final List<Integer> messageIds;
-
-    public UserState(State state) {
-        this(state, new HashMap<>(), new ArrayList<>());
-    }
-
-    public UserState(State state, Map<String, String> data) {
-        this(state, data, new ArrayList<>());
-    }
-
-    public UserState(State state, Map<String, String> data, List<Integer> messageIds) {
-        this.state = state;
-        this.data = data;
-        this.messageIds = messageIds;
-    }
-
-    public Map<String, String> getAllData() {
-        return new HashMap<>(data);
-    }
-
-    public void addMessageId(int messageId) {
-        this.messageIds.add(messageId);
-    }
-
-    public List<Integer> getMessageIds() {
-        return new ArrayList<>(messageIds);
-    }
-}
-
-enum State {
-    AWAITING_LOGIN,
-    AWAITING_PASSWORD,
-    AWAITING_REGISTRATION_USERNAME,
-    AWAITING_REGISTRATION_PASSWORD,
-    AWAITING_REGISTRATION_CONFIRM_PASSWORD,
-    AWAITING_REGISTRATION_EMAIL
 
 }

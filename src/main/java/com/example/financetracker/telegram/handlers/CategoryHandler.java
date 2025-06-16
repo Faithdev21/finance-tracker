@@ -100,7 +100,7 @@ public class CategoryHandler {
                 bot.sendMainMenu(chatId);
             } catch (HttpClientErrorException e) {
                 if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                    bot.refreshToken(chatId); // Пробуем обновить токен
+                    bot.refreshToken(chatId);
                     bot.sendMessage(chatId, "Токен истёк, пробуем обновить. Повторите попытку.");
                 } else {
                     bot.sendMessage(chatId, "Ошибка при добавлении категории: " + e.getMessage());
